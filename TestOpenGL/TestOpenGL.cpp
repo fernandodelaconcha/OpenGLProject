@@ -54,7 +54,7 @@ bool loadShaders(GLuint &program)
 	std::ifstream in_file;
 
 	// vertex
-	in_file.open("vertex_core.glsl");
+	in_file.open("C:/Users/ferna/OneDrive/Desktop/TestOpenGL/TestOpenGL/TestOpenGL/vertex_core.glsl");
 
 	if (in_file.is_open()) {
 		while (std::getline(in_file, temp)) {
@@ -86,7 +86,7 @@ bool loadShaders(GLuint &program)
 	src = "";
 
 	//fragment
-	in_file.open("fragment_core.glsl");
+	in_file.open("C:/Users/ferna/OneDrive/Desktop/TestOpenGL/TestOpenGL/TestOpenGL/fragment_core.glsl");
 
 	if (in_file.is_open()) {
 		while (std::getline(in_file, temp)) {
@@ -169,6 +169,16 @@ int main()
 		glfwTerminate();
 		return -3;
 	}
+
+	// OPEN GL OPTIONS
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+
+	glCullFace(GL_BACK);
+	glFrontFace(GL_CCW);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	GLuint core_program;
 	if (!loadShaders(core_program)) {
