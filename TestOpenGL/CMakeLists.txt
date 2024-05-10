@@ -13,5 +13,5 @@ endif()
 target_link_libraries(TestOpenGL
 glfw
 libglew_static
-soil
-glm)
+glm
+soil2)

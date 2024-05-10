@@ -24,16 +24,18 @@ struct Vertex
 
 Vertex vertices[] =
 {
-	glm::vec3(0.0f, 0.5f, 0.f),glm::vec3(1.0f, 0.f, 0.f), glm::vec2(0.f, 1.f),
+	glm::vec3(-0.5f, 0.5f, 0.f),glm::vec3(1.0f, 0.f, 0.f), glm::vec2(0.f, 1.f),
 	glm::vec3(-0.5f, -0.5f, 0.f),glm::vec3(0.f, 1.f, 0.f), glm::vec2(0.f, 0.f),
-	glm::vec3(0.5f, -0.5f, 0.f),glm::vec3(0.f, 0.f, 1.f), glm::vec2(1.f, 0.f)
+	glm::vec3(0.5f, -0.5f, 0.f),glm::vec3(0.f, 0.f, 1.f), glm::vec2(1.f, 0.f),
+	glm::vec3(0.5f, 0.5f, 0.f),glm::vec3(1.f, 1.f, 0.f), glm::vec2(1.f, 1.f)
 };
 
 unsigned nrOfVertices = sizeof(vertices) / sizeof(Vertex);
 
 GLuint indices[] =
 {
-	0,1,2
+	0,1,2,
+	0,2,3
 };
 
 unsigned nrOfIndices = sizeof(indices) / sizeof(GLuint);
@@ -240,22 +242,89 @@ int main()
 
 	glBindVertexArray(0);
 
+	//texture1
 	int image_width = 0;
 	int image_height = 0;
-	unsigned char* image;
+	unsigned char* image = SOIL_load_image("C:/Users/ferna/OneDrive/Desktop/TestOpenGL/TestOpenGL/TestOpenGL/Images/cat1.png", &image_width, &image_height, NULL, SOIL_LOAD_RGBA);
+
+	GLuint texture0;
+	glGenTextures(1, &texture0);
+	glBindTexture(GL_TEXTURE_2D, texture0);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+	if (image)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image_width, image_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+		std::cerr << "ERROR::TEXTURE_LOADING_FAILED" << "\n";
+	}
+
+	glActiveTexture(0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	SOIL_free_image_data(image);
+
+	//texture2
+	int image_width2 = 0;
+	int image_height2 = 0;
+	unsigned char* image2 = SOIL_load_image("C:/Users/ferna/OneDrive/Desktop/TestOpenGL/TestOpenGL/TestOpenGL/Images/chest.png", &image_width2, &image_height2, NULL, SOIL_LOAD_RGBA);
+
+	GLuint texture2;
+	glGenTextures(1, &texture2);
+	glBindTexture(GL_TEXTURE_2D, texture2);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+	if (image2)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image_width2, image_height2, 0, GL_RGBA, GL_UNSIGNED_BYTE, image2);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+		std::cerr << "ERROR::TEXTURE_LOADING_FAILED" << "\n";
+	}
+
+	glActiveTexture(0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	SOIL_free_image_data(image2);
 
 	glClearColor(0.3f, 0.3f, 0.4f, 1.0f);
 	
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
-
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 		glUseProgram(core_program);
+
+		glUniform1i(glGetUniformLocation(core_program, "texture0"), 0);
+		glUniform1i(glGetUniformLocation(core_program, "texture2"), 2);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture0);
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, texture2);
 		glBindVertexArray(VAO);
+
 		glDrawElements(GL_TRIANGLES, nrOfIndices, GL_UNSIGNED_INT, 0);
+		//glDrawArrays(GL_TRIANGLES, 0, nrOfVertices);
 
 		glfwSwapBuffers(window);
+		glFlush();
+
+		glBindVertexArray(0);
+		glUseProgram(0);
+		glActiveTexture(0);
+		glBindTexture(GL_TEXTURE_2D, 0);
 	}
 
 	glfwDestroyWindow(window);
