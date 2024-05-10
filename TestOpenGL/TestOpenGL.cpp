@@ -13,6 +13,7 @@
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 #include <glm/mat4x4.hpp>
+#include <SOIL2.h>
 
 struct Vertex
 {
@@ -238,6 +239,10 @@ int main()
 	glEnableVertexAttribArray(2);
 
 	glBindVertexArray(0);
+
+	int image_width = 0;
+	int image_height = 0;
+	unsigned char* image;
 
 	glClearColor(0.3f, 0.3f, 0.4f, 1.0f);
 	

@@ -3,7 +3,7 @@
 #
 
 # Add source to this project's executable.
-add_executable (TestOpenGL "TestOpenGL.cpp" "TestOpenGL.h")
+add_executable (TestOpenGL "TestOpenGL.cpp" "TestOpenGL.h" )
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET TestOpenGL PROPERTY CXX_STANDARD 20)
@@ -13,4 +13,5 @@ endif()
 target_link_libraries(TestOpenGL
 glfw
 libglew_static
+soil
 glm)
