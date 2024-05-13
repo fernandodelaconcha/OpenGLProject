@@ -14,6 +14,9 @@
 #include <glm/vec4.hpp>
 #include <glm/mat4x4.hpp>
 #include <SOIL2.h>
+#include <glm/ext/matrix_transform.hpp>
+#include <glm/ext/matrix_clip_space.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 struct Vertex
 {
@@ -64,13 +67,45 @@ void frameBufferResizeCallback(GLFWwindow* window, int width, int height)
 	glViewport(0, 0, width, height);
 }
 
-void handleKeyInput(GLFWwindow* window, int key, int status, int action, int mods)
+void handleExit(GLFWwindow* window, int key, int status, int action, int mods)
 {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
 		glfwSetWindowShouldClose(window, GLFW_TRUE);
 	}
-	else {
-		std::cout << "key: " << key << "; status: " << status << "; action: " << action <<"; mods: " << mods << std::endl;
+}
+
+void updateInput(GLFWwindow* window, glm::vec3& position, glm::vec3& rotation, glm::vec3& scale) {
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+	{
+		position.z -= 0.001f;
+	}
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+	{
+		position.z += 0.001f;
+	}
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+	{
+		position.x -= 0.001f;
+	}
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+	{
+		position.x += 0.001f;
+	}
+	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+	{
+		rotation.y -= 0.01f;
+	}
+	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+	{
+		rotation.y += 0.01f;
+	}
+	if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS)
+	{
+		scale += 0.001f;
+	}
+	if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS)
+	{
+		scale -= 0.001f;
 	}
 }
 
@@ -174,6 +209,8 @@ bool loadShaders(GLuint &program)
 
 int main()
 {
+	int frameBufferWidth = 0;
+	int frameBufferHeight = 0;
 	if (!initializeGLFW()) {
 		std::cerr << "glfw initialization failed." << std::endl;
 		return -1;
@@ -185,6 +222,8 @@ int main()
 
 	glfwSetFramebufferSizeCallback(window, frameBufferResizeCallback);
 
+	glfwGetFramebufferSize(window, &frameBufferWidth, &frameBufferHeight);
+
 	if (window == nullptr) {
 		std::cerr << "GLFW window creation failed" << std::endl;
 		glfwTerminate();
@@ -192,7 +231,7 @@ int main()
 	}
 
 	glfwMakeContextCurrent(window);
-	glfwSetKeyCallback(window, handleKeyInput);
+	glfwSetKeyCallback(window, handleExit);
 
 	glewExperimental = GL_TRUE;
 	if (!initializeGLEW()) {
@@ -299,15 +338,67 @@ int main()
 	SOIL_free_image_data(image2);
 
 	glClearColor(0.3f, 0.3f, 0.4f, 1.0f);
+
+	glm::vec3 position(0.f);
+	glm::vec3 rotation(0.f);
+	glm::vec3 scale(1.f);
+
+	glm::mat4 ModelMatrix(1.f);
+	ModelMatrix = glm::translate(ModelMatrix, position);
+	ModelMatrix = glm::rotate(ModelMatrix, glm::radians(rotation.x), glm::vec3(1.f, 0.f, 0.f));
+	ModelMatrix = glm::rotate(ModelMatrix, glm::radians(rotation.y), glm::vec3(0.f, 1.f, 0.f));
+	ModelMatrix = glm::rotate(ModelMatrix, glm::radians(rotation.z), glm::vec3(0.f, 0.f, 1.f));
+	ModelMatrix = glm::scale(ModelMatrix, scale);
+
+	glm::vec3 worldUp = glm::vec3(0.f, 1.f, 0.f);
+	glm::vec3 camFront = glm::vec3(0.f, 0.f, -1.f);
+	glm::vec3 camPosition = glm::vec3(0.f, 0.f, 1.f);
+	glm::mat4 ViewMatrix(1.f);
+	ViewMatrix = glm::lookAt(camPosition, camPosition + camFront, worldUp);
+
+	float fov = 90.f;
+	float nearPlane = 0.1f;
+	float farPlane = 1000.f;
+	glm::mat4 ProjectionMatrix(1.f);
+	ProjectionMatrix = glm::perspective(
+		glm::radians(fov),
+		static_cast<float>(frameBufferWidth) / frameBufferHeight,
+		nearPlane,
+		farPlane
+	);
 	
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
+		updateInput(window, position, rotation, scale);
+		
 		glUseProgram(core_program);
+
+		glUniformMatrix4fv(glGetUniformLocation(core_program, "ModelMatrix"), 1, GL_FALSE, glm::value_ptr(ModelMatrix));
+		glUniformMatrix4fv(glGetUniformLocation(core_program, "ViewMatrix"), 1, GL_FALSE, glm::value_ptr(ViewMatrix));
+		glUniformMatrix4fv(glGetUniformLocation(core_program, "ProjectionMatrix"), 1, GL_FALSE, glm::value_ptr(ProjectionMatrix));
 
 		glUniform1i(glGetUniformLocation(core_program, "texture0"), 0);
 		glUniform1i(glGetUniformLocation(core_program, "texture2"), 2);
+
+		ModelMatrix = glm::mat4(1.f);
+		ModelMatrix = glm::translate(ModelMatrix, position);
+		ModelMatrix = glm::rotate(ModelMatrix, glm::radians(rotation.x), glm::vec3(1.f, 0.f, 0.f));
+		ModelMatrix = glm::rotate(ModelMatrix, glm::radians(rotation.y), glm::vec3(0.f, 1.f, 0.f));
+		ModelMatrix = glm::rotate(ModelMatrix, glm::radians(rotation.z), glm::vec3(0.f, 0.f, 1.f));
+		ModelMatrix = glm::scale(ModelMatrix, scale);
+		glUniformMatrix4fv(glGetUniformLocation(core_program, "ModelMatrix"), 1, GL_FALSE, glm::value_ptr(ModelMatrix));
+
+
+		glfwGetFramebufferSize(window, &frameBufferWidth, &frameBufferHeight);
+
+		ProjectionMatrix = glm::perspective(
+			glm::radians(fov),
+			static_cast<float>(frameBufferWidth) / frameBufferHeight,
+			nearPlane,
+			farPlane
+		);
 
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture0);
