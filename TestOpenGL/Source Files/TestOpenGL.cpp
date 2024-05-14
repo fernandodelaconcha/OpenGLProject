@@ -1,7 +1,7 @@
 ﻿// TestOpenGL.cpp : Defines the entry point for the application.
 //
 
-#include "TestOpenGL.h"
+#include "../Header Files/TestOpenGL.h"
 #include <iostream>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -123,7 +123,7 @@ bool loadShaders(GLuint &program)
 	std::ifstream in_file;
 
 	// vertex
-	in_file.open("C:/Users/ferna/OneDrive/Desktop/TestOpenGL/TestOpenGL/TestOpenGL/vertex_core.glsl");
+	in_file.open("C:/Users/ferna/OneDrive/Desktop/TestOpenGL/TestOpenGL/TestOpenGL/Resource Files/vertex_core.glsl");
 
 	if (in_file.is_open()) {
 		while (std::getline(in_file, temp)) {
@@ -155,7 +155,7 @@ bool loadShaders(GLuint &program)
 	src = "";
 
 	//fragment
-	in_file.open("C:/Users/ferna/OneDrive/Desktop/TestOpenGL/TestOpenGL/TestOpenGL/fragment_core.glsl");
+	in_file.open("C:/Users/ferna/OneDrive/Desktop/TestOpenGL/TestOpenGL/TestOpenGL/Resource Files/fragment_core.glsl");
 
 	if (in_file.is_open()) {
 		while (std::getline(in_file, temp)) {
