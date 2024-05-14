@@ -23,14 +23,16 @@ struct Vertex
 	glm::vec3 position;
 	glm::vec3 color;
 	glm::vec2 texcoord;
+	glm::vec3 normal;
 };
 
 Vertex vertices[] =
 {
-	glm::vec3(-0.5f, 0.5f, 0.f),glm::vec3(1.0f, 0.f, 0.f), glm::vec2(0.f, 1.f),
-	glm::vec3(-0.5f, -0.5f, 0.f),glm::vec3(0.f, 1.f, 0.f), glm::vec2(0.f, 0.f),
-	glm::vec3(0.5f, -0.5f, 0.f),glm::vec3(0.f, 0.f, 1.f), glm::vec2(1.f, 0.f),
-	glm::vec3(0.5f, 0.5f, 0.f),glm::vec3(1.f, 1.f, 0.f), glm::vec2(1.f, 1.f)
+	// position                   //color                    //texcoords          //normals
+	glm::vec3(-0.5f, 0.5f, 0.f),  glm::vec3(1.0f, 0.f, 0.f), glm::vec2(0.f, 1.f), glm::vec3(0.f, 0.f, -1.f),
+	glm::vec3(-0.5f, -0.5f, 0.f), glm::vec3(0.f, 1.f, 0.f),  glm::vec2(0.f, 0.f), glm::vec3(0.f, 0.f, -1.f),
+	glm::vec3(0.5f, -0.5f, 0.f),  glm::vec3(0.f, 0.f, 1.f),  glm::vec2(1.f, 0.f), glm::vec3(0.f, 0.f, -1.f),
+	glm::vec3(0.5f, 0.5f, 0.f),   glm::vec3(1.f, 1.f, 0.f),  glm::vec2(1.f, 1.f), glm::vec3(0.f, 0.f, -1.f)
 };
 
 unsigned nrOfVertices = sizeof(vertices) / sizeof(Vertex);
@@ -279,6 +281,9 @@ int main()
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, texcoord));
 	glEnableVertexAttribArray(2);
 
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, normal));
+	glEnableVertexAttribArray(3);
+
 	glBindVertexArray(0);
 
 	//texture1
@@ -366,6 +371,8 @@ int main()
 		nearPlane,
 		farPlane
 	);
+
+	glm::vec3 lightPos0 = glm::vec3(0.f, 0.f, 1.f);
 	
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
@@ -378,6 +385,9 @@ int main()
 		glUniformMatrix4fv(glGetUniformLocation(core_program, "ModelMatrix"), 1, GL_FALSE, glm::value_ptr(ModelMatrix));
 		glUniformMatrix4fv(glGetUniformLocation(core_program, "ViewMatrix"), 1, GL_FALSE, glm::value_ptr(ViewMatrix));
 		glUniformMatrix4fv(glGetUniformLocation(core_program, "ProjectionMatrix"), 1, GL_FALSE, glm::value_ptr(ProjectionMatrix));
+
+		glUniform3fv(glGetUniformLocation(core_program, "lightPos"), 1, glm::value_ptr(lightPos0));
+		glUniform3fv(glGetUniformLocation(core_program, "cameraPos"), 1, glm::value_ptr(camPosition));
 
 		glUniform1i(glGetUniformLocation(core_program, "texture0"), 0);
 		glUniform1i(glGetUniformLocation(core_program, "texture2"), 2);
