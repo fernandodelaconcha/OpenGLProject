@@ -19,6 +19,7 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "../Header Files/Shader.h"
 #include "../Header Files/Texture.h"
+#include "../Header Files/Material.h"
 
 struct Vertex
 {
@@ -191,6 +192,9 @@ int main()
 	Texture texture1 = Texture("C:/Users/ferna/OneDrive/Desktop/TestOpenGL/TestOpenGL/TestOpenGL/Images/cat1.png", GL_TEXTURE_2D, 0);
 	Texture texture2 = Texture("C:/Users/ferna/OneDrive/Desktop/TestOpenGL/TestOpenGL/TestOpenGL/Images/chest.png", GL_TEXTURE_2D, 1);
 
+	//material
+	Material material1(glm::vec3(0.1f), glm::vec3(1.f), glm::vec3(1.f), texture1.getTextureUnit(), texture2.getTextureUnit());
+
 	glClearColor(0.3f, 0.3f, 0.4f, 1.0f);
 
 	glm::vec3 position(0.f);
@@ -236,8 +240,7 @@ int main()
 		core_program.setVec3f(lightPos0, "lightPos");
 		core_program.setVec3f(camPosition, "cameraPos");
 
-		core_program.set1i(texture1.getTextureUnit(), "texture1");
-		core_program.set1i(texture2.getTextureUnit(), "texture2");
+		material1.sendToShader(core_program);
 
 		ModelMatrix = glm::mat4(1.f);
 		ModelMatrix = glm::translate(ModelMatrix, position);
