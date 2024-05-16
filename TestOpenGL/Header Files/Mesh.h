@@ -10,9 +10,8 @@
 class Mesh
 {
 private:
-
-	unsigned nrOfVertices;
-	unsigned nrOfIndices;
+	unsigned numberOfVertices;
+	unsigned numberOfIndices;
 
 	GLuint VAO;
 	GLuint VBO;
@@ -26,22 +25,19 @@ private:
 
 	void initVAO(Vertex* vertexArray, const unsigned& numberOfVertices, GLuint* indexArray, const unsigned& numberOfIndices)
 	{
-		this->nrOfVertices = nrOfVertices;
-		this->nrOfIndices = nrOfIndices;
+		this->numberOfVertices = numberOfVertices;
+		this->numberOfIndices = numberOfIndices;
 
 		glCreateVertexArrays(1, &this->VAO);
 		glBindVertexArray(this->VAO);
 
 		glGenBuffers(1, &this->VBO);
 		glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
-		glBufferData(GL_ARRAY_BUFFER, this->nrOfVertices * sizeof(Vertex), vertexArray, GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, this->numberOfVertices * sizeof(Vertex), vertexArray, GL_STATIC_DRAW);
 
-		if (this->nrOfIndices > 0)
-		{
-			glGenBuffers(1, &this->EBO);
-			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
-			glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->nrOfIndices * sizeof(GLuint), indexArray, GL_STATIC_DRAW);
-		}
+		glGenBuffers(1, &this->EBO);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->numberOfIndices * sizeof(GLuint), indexArray, GL_STATIC_DRAW);
 
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, position));
 		glEnableVertexAttribArray(0);
@@ -126,10 +122,10 @@ public:
 
 		glBindVertexArray(this->VAO);
 
-		if (this->nrOfIndices == 0)
-			glDrawArrays(GL_TRIANGLES, 0, this->nrOfVertices);
+		if (this->numberOfIndices == 0)
+			glDrawArrays(GL_TRIANGLES, 0, this->numberOfVertices);
 		else
-			glDrawElements(GL_TRIANGLES, this->nrOfIndices, GL_UNSIGNED_INT, 0);
+			glDrawElements(GL_TRIANGLES, this->numberOfIndices, GL_UNSIGNED_INT, 0);
 
 		glBindVertexArray(0);
 		glUseProgram(0);
