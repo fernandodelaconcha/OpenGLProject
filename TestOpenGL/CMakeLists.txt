@@ -3,7 +3,7 @@
 #
 
 # Add source to this project's executable.
-add_executable (TestOpenGL "Source Files/TestOpenGL.cpp" "Header Files/TestOpenGL.h"  "Header Files/Shader.h" "Header Files/Texture.h" "Header Files/Material.h")
+add_executable (TestOpenGL "Source Files/TestOpenGL.cpp" "Header Files/TestOpenGL.h"  "Header Files/Shader.h" "Header Files/Texture.h" "Header Files/Material.h" "Header Files/Vertex.h" "Header Files/Mesh.h")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET TestOpenGL PROPERTY CXX_STANDARD 20)

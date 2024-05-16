@@ -17,25 +17,15 @@
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include "../Header Files/Shader.h"
-#include "../Header Files/Texture.h"
-#include "../Header Files/Material.h"
-
-struct Vertex
-{
-	glm::vec3 position;
-	glm::vec3 color;
-	glm::vec2 texcoord;
-	glm::vec3 normal;
-};
+#include "../Header Files/Mesh.h"
 
 Vertex vertices[] =
 {
 	// position                   //color                    //texcoords          //normals
-	glm::vec3(-0.5f, 0.5f, 0.f),  glm::vec3(1.0f, 0.f, 0.f), glm::vec2(0.f, 1.f), glm::vec3(0.f, 0.f, -1.f),
-	glm::vec3(-0.5f, -0.5f, 0.f), glm::vec3(0.f, 1.f, 0.f),  glm::vec2(0.f, 0.f), glm::vec3(0.f, 0.f, -1.f),
-	glm::vec3(0.5f, -0.5f, 0.f),  glm::vec3(0.f, 0.f, 1.f),  glm::vec2(1.f, 0.f), glm::vec3(0.f, 0.f, -1.f),
-	glm::vec3(0.5f, 0.5f, 0.f),   glm::vec3(1.f, 1.f, 0.f),  glm::vec2(1.f, 1.f), glm::vec3(0.f, 0.f, -1.f)
+	glm::vec3(-0.5f, 0.5f, 0.f),  glm::vec3(1.0f, 0.f, 0.f), glm::vec2(0.f, 1.f), glm::vec3(0.f, 0.f, 1.f),
+	glm::vec3(-0.5f, -0.5f, 0.f), glm::vec3(0.f, 1.f, 0.f),  glm::vec2(0.f, 0.f), glm::vec3(0.f, 0.f, 1.f),
+	glm::vec3(0.5f, -0.5f, 0.f),  glm::vec3(0.f, 0.f, 1.f)    ,  glm::vec2(1.f, 0.f), glm::vec3(0.f, 0.f, 1.f),
+	glm::vec3(0.5f, 0.5f, 0.f),   glm::vec3(1.f, 1.f, 0.f),  glm::vec2(1.f, 1.f), glm::vec3(0.f, 0.f, 1.f)
 };
 
 unsigned nrOfVertices = sizeof(vertices) / sizeof(Vertex);
@@ -79,38 +69,38 @@ void handleExit(GLFWwindow* window, int key, int status, int action, int mods)
 	}
 }
 
-void updateInput(GLFWwindow* window, glm::vec3& position, glm::vec3& rotation, glm::vec3& scale) {
+void updateInput(GLFWwindow* window, Mesh &mesh) {
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 	{
-		position.z -= 0.001f;
+		mesh.move(glm::vec3(0.f, 0.f, -0.001f));
 	}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 	{
-		position.z += 0.001f;
+		mesh.move(glm::vec3(0.f, 0.f, 0.001f));
 	}
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 	{
-		position.x -= 0.001f;
+		mesh.move(glm::vec3(-0.001f, 0.f, 0.f));
 	}
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 	{
-		position.x += 0.001f;
+		mesh.move(glm::vec3(0.001f, 0.f, 0.f));
 	}
 	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
 	{
-		rotation.y -= 0.01f;
+		mesh.rotate(glm::vec3(0.f, -0.01f, 0.f));
 	}
 	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
 	{
-		rotation.y += 0.01f;
+		mesh.rotate(glm::vec3(0.f, 0.01f, 0.f));
 	}
 	if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS)
 	{
-		scale += 0.001f;
+		mesh.scaleUp(glm::vec3(0.001f));
 	}
 	if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS)
 	{
-		scale -= 0.001f;
+		mesh.scaleUp(glm::vec3(-0.001f));
 	}
 }
 
@@ -160,33 +150,6 @@ int main()
 
 	Shader core_program("C:/Users/ferna/OneDrive/Desktop/TestOpenGL/TestOpenGL/TestOpenGL/Resource Files/vertex_core.glsl", "C:/Users/ferna/OneDrive/Desktop/TestOpenGL/TestOpenGL/TestOpenGL/Resource Files/fragment_core.glsl");
 	
-	GLuint VAO;
-	glCreateVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
-
-	GLuint VBO;
-	glGenBuffers(1, &VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-	GLuint EBO;
-	glGenBuffers(1, &EBO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, position));
-	glEnableVertexAttribArray(0);
-
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, color));
-	glEnableVertexAttribArray(1);
-
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, texcoord));
-	glEnableVertexAttribArray(2);
-
-	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (GLvoid*)offsetof(Vertex, normal));
-	glEnableVertexAttribArray(3);
-
-	glBindVertexArray(0);
 
 	//textures
 	Texture texture1 = Texture("C:/Users/ferna/OneDrive/Desktop/TestOpenGL/TestOpenGL/TestOpenGL/Images/cat1.png", GL_TEXTURE_2D, 0);
@@ -196,17 +159,6 @@ int main()
 	Material material1(glm::vec3(0.1f), glm::vec3(1.f), glm::vec3(1.f), texture1.getTextureUnit(), texture2.getTextureUnit());
 
 	glClearColor(0.3f, 0.3f, 0.4f, 1.0f);
-
-	glm::vec3 position(0.f);
-	glm::vec3 rotation(0.f);
-	glm::vec3 scale(1.f);
-
-	glm::mat4 ModelMatrix(1.f);
-	ModelMatrix = glm::translate(ModelMatrix, position);
-	ModelMatrix = glm::rotate(ModelMatrix, glm::radians(rotation.x), glm::vec3(1.f, 0.f, 0.f));
-	ModelMatrix = glm::rotate(ModelMatrix, glm::radians(rotation.y), glm::vec3(0.f, 1.f, 0.f));
-	ModelMatrix = glm::rotate(ModelMatrix, glm::radians(rotation.z), glm::vec3(0.f, 0.f, 1.f));
-	ModelMatrix = glm::scale(ModelMatrix, scale);
 
 	glm::vec3 worldUp = glm::vec3(0.f, 1.f, 0.f);
 	glm::vec3 camFront = glm::vec3(0.f, 0.f, -1.f);
@@ -226,14 +178,14 @@ int main()
 	);
 
 	glm::vec3 lightPos0 = glm::vec3(0.f, 0.f, 1.f);
+	Mesh test(vertices, nrOfVertices, indices, nrOfIndices, glm::vec3(0.f), glm::vec3(0.f), glm::vec3(2.f));
 	
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-		updateInput(window, position, rotation, scale);
+		updateInput(window, test);
 
-		core_program.setMat4fv(ModelMatrix, "ModelMatrix");
 		core_program.setMat4fv(ViewMatrix, "ViewMatrix");
 		core_program.setMat4fv(ProjectionMatrix, "ProjectionMatrix");
 
@@ -241,13 +193,6 @@ int main()
 		core_program.setVec3f(camPosition, "cameraPos");
 
 		material1.sendToShader(core_program);
-
-		ModelMatrix = glm::mat4(1.f);
-		ModelMatrix = glm::translate(ModelMatrix, position);
-		ModelMatrix = glm::rotate(ModelMatrix, glm::radians(rotation.x), glm::vec3(1.f, 0.f, 0.f));
-		ModelMatrix = glm::rotate(ModelMatrix, glm::radians(rotation.y), glm::vec3(0.f, 1.f, 0.f));
-		ModelMatrix = glm::rotate(ModelMatrix, glm::radians(rotation.z), glm::vec3(0.f, 0.f, 1.f));
-		ModelMatrix = glm::scale(ModelMatrix, scale);
 
 		glfwGetFramebufferSize(window, &frameBufferWidth, &frameBufferHeight);
 
@@ -262,10 +207,8 @@ int main()
 
 		texture1.bind();
 		texture2.bind();
-		glBindVertexArray(VAO);
 
-		glDrawElements(GL_TRIANGLES, nrOfIndices, GL_UNSIGNED_INT, 0);
-		//glDrawArrays(GL_TRIANGLES, 0, nrOfVertices);
+		test.render(&core_program);
 
 		glfwSwapBuffers(window);
 		glFlush();
