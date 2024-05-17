@@ -18,25 +18,7 @@
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "../Header Files/Mesh.h"
-
-Vertex vertices[] =
-{
-	// position                   //color                    //texcoords          //normals
-	glm::vec3(-0.5f, 0.5f, 0.f),  glm::vec3(1.0f, 0.f, 0.f), glm::vec2(0.f, 1.f), glm::vec3(0.f, 0.f, 1.f),
-	glm::vec3(-0.5f, -0.5f, 0.f), glm::vec3(0.f, 1.f, 0.f),  glm::vec2(0.f, 0.f), glm::vec3(0.f, 0.f, 1.f),
-	glm::vec3(0.5f, -0.5f, 0.f),  glm::vec3(0.f, 0.f, 1.f)    ,  glm::vec2(1.f, 0.f), glm::vec3(0.f, 0.f, 1.f),
-	glm::vec3(0.5f, 0.5f, 0.f),   glm::vec3(1.f, 1.f, 0.f),  glm::vec2(1.f, 1.f), glm::vec3(0.f, 0.f, 1.f)
-};
-
-unsigned nrOfVertices = sizeof(vertices) / sizeof(Vertex);
-
-GLuint indices[] =
-{
-	0,1,2,
-	0,2,3
-};
-
-unsigned nrOfIndices = sizeof(indices) / sizeof(GLuint);
+#include "../Header Files/Primitives.h"
 
 static bool initializeGLFW()
 {
@@ -46,15 +28,6 @@ static bool initializeGLFW()
 static bool initializeGLEW()
 {
 	return glewInit() == GLEW_OK;
-}
-
-void setWindowHints()
-{
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
-	glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 }
 
 void frameBufferResizeCallback(GLFWwindow* window, int width, int height)
@@ -104,32 +77,43 @@ void updateInput(GLFWwindow* window, Mesh &mesh) {
 	}
 }
 
+GLFWwindow* createWindow(const char * title, const int width, const int height, int& fbWidth, int& fbHeight, int GLMajorVersion, int GLMinorVersion, bool resizable)
+{
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, GLMajorVersion);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, GLMinorVersion);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
+	glfwWindowHint(GLFW_RESIZABLE, resizable);
+
+	GLFWwindow* window = glfwCreateWindow(width, height, title, nullptr, nullptr);
+	glfwSetFramebufferSizeCallback(window, frameBufferResizeCallback);
+	glfwGetFramebufferSize(window, &fbWidth, &fbHeight);
+	glfwMakeContextCurrent(window);
+
+	return window;
+}
+
 int main()
 {
-	int frameBufferWidth = 0;
-	int frameBufferHeight = 0;
 	if (!initializeGLFW()) {
 		std::cerr << "glfw initialization failed." << std::endl;
 		return -1;
 	}
+	const int GLMajorVersion = 4;
+	const int GLMinorVersion = 5;
+	const int WINDOW_WIDTH = 1280;
+	const int WINDOW_HEIGHT = 720;
+	int frameBufferWidth = WINDOW_WIDTH;
+	int frameBufferHeight = WINDOW_HEIGHT;
 
-	setWindowHints();
-
-	GLFWwindow* window = glfwCreateWindow(1280, 720, "Super videogame", nullptr, nullptr);
-
-	glfwSetFramebufferSizeCallback(window, frameBufferResizeCallback);
-
-	glfwGetFramebufferSize(window, &frameBufferWidth, &frameBufferHeight);
+	GLFWwindow* window = createWindow("Super videogame", WINDOW_WIDTH, WINDOW_HEIGHT, frameBufferWidth, frameBufferHeight, GLMajorVersion, GLMinorVersion, true);
 
 	if (window == nullptr) {
 		std::cerr << "GLFW window creation failed" << std::endl;
 		glfwTerminate();
 		return -2;
 	}
-
-	glfwMakeContextCurrent(window);
 	glfwSetKeyCallback(window, handleExit);
-
 	glewExperimental = GL_TRUE;
 	if (!initializeGLEW()) {
 		std::cerr << "Glew initialization failed" << std::endl;
@@ -148,7 +132,7 @@ int main()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	Shader core_program("C:/Users/ferna/OneDrive/Desktop/TestOpenGL/TestOpenGL/TestOpenGL/Resource Files/vertex_core.glsl", "C:/Users/ferna/OneDrive/Desktop/TestOpenGL/TestOpenGL/TestOpenGL/Resource Files/fragment_core.glsl");
+	Shader core_program(GLMajorVersion, GLMinorVersion, "C:/Users/ferna/OneDrive/Desktop/TestOpenGL/TestOpenGL/TestOpenGL/Resource Files/vertex_core.glsl", "C:/Users/ferna/OneDrive/Desktop/TestOpenGL/TestOpenGL/TestOpenGL/Resource Files/fragment_core.glsl");
 	
 
 	//textures
@@ -178,7 +162,9 @@ int main()
 	);
 
 	glm::vec3 lightPos0 = glm::vec3(0.f, 0.f, 1.f);
-	Mesh test(vertices, nrOfVertices, indices, nrOfIndices, glm::vec3(0.f), glm::vec3(0.f), glm::vec3(2.f));
+
+	Quad tempQuad = Quad();
+	Mesh test(tempQuad, glm::vec3(0.f), glm::vec3(0.f), glm::vec3(2.f));
 	
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
