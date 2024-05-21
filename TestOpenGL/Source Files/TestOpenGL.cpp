@@ -1,24 +1,8 @@
 ﻿// TestOpenGL.cpp : Defines the entry point for the application.
 //
 
-#include "../Header Files/TestOpenGL.h"
-#include <iostream>
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-#include <fstream>
-#include <string>
-#include <vector>
-#include <glm/common.hpp>
-#include <glm/vec2.hpp>
-#include <glm/vec3.hpp>
-#include <glm/vec4.hpp>
-#include <glm/mat4x4.hpp>
-#include <SOIL2.h>
-#include <glm/ext/matrix_transform.hpp>
-#include <glm/ext/matrix_clip_space.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include "../Header Files/Mesh.h"
-#include "../Header Files/Primitives.h"
+#include "../Header Files/Game.h"
+
 
 static bool initializeGLFW()
 {
@@ -28,11 +12,6 @@ static bool initializeGLFW()
 static bool initializeGLEW()
 {
 	return glewInit() == GLEW_OK;
-}
-
-void frameBufferResizeCallback(GLFWwindow* window, int width, int height)
-{
-	glViewport(0, 0, width, height);
 }
 
 void handleExit(GLFWwindow* window, int key, int status, int action, int mods)
@@ -86,7 +65,7 @@ GLFWwindow* createWindow(const char * title, const int width, const int height, 
 	glfwWindowHint(GLFW_RESIZABLE, resizable);
 
 	GLFWwindow* window = glfwCreateWindow(width, height, title, nullptr, nullptr);
-	glfwSetFramebufferSizeCallback(window, frameBufferResizeCallback);
+	glfwSetFramebufferSizeCallback(window, Game::frameBufferResizeCallback);
 	glfwGetFramebufferSize(window, &fbWidth, &fbHeight);
 	glfwMakeContextCurrent(window);
 
