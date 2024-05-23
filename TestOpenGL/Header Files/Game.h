@@ -17,6 +17,18 @@ private:
 	int GL_VERSION_MAJOR;
 	int GL_VERSION_MINOR;
 
+	float dt;
+	float curTime;
+	float lastTime;
+
+	double lastMouseX;
+	double lastMouseY;
+	double mouseX;
+	double mouseY;
+	double mouseOffsetX;
+	double mouseOffsetY;
+	bool firstMouse;
+
 	glm::mat4 ViewMatrix;
 	glm::vec3 camPosition;
 	glm::vec3 worldUp;
@@ -53,10 +65,12 @@ public:
 
 	void setWindowShouldClose();
 
+	void updateDt();
+	void updateMouseInput();
+	void updateKeyboardInput();
+	void updateInput();
 	void update();
 	void render();
 
 	static void frameBufferResizeCallback(GLFWwindow* window, int width, int height);
-	static void updateInput(GLFWwindow* window);
-	static void updateInput(GLFWwindow* window, Mesh& mesh);
 };
