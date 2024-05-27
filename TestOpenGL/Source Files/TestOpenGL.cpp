@@ -5,7 +5,7 @@
 
 int main()
 {
-	Game game("Super videogame", 640, 480, 4, 5, false);
+	Game game("Super videogame", 1920, 1080, 4, 5, false);
 	
 	while (!game.getWindowShouldClose()) {
 		game.update();

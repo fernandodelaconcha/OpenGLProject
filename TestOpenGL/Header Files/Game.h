@@ -1,6 +1,7 @@
 #pragma once
 
 #include "libs.h"
+#include "Camera.h"
 
 void frameBufferResizeCallback(GLFWwindow* window, int width, int height);
 
@@ -28,6 +29,8 @@ private:
 	double mouseOffsetX;
 	double mouseOffsetY;
 	bool firstMouse;
+
+	Camera camera;
 
 	glm::mat4 ViewMatrix;
 	glm::vec3 camPosition;
