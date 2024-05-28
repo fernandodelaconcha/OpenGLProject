@@ -91,10 +91,20 @@ void Game::initMaterials()
 	this->materials.push_back(new Material(glm::vec3(0.1f), glm::vec3(1.f), glm::vec3(1.f), 0, 1));
 }
 
-void Game::initMeshes()
+void Game::initModels()
 {
-	this->meshes.push_back(new Mesh(Pyramid(), glm::vec3(0.f), glm::vec3(0.f), glm::vec3(2.f)));
-	this->meshes.push_back(new Mesh(Quad(), glm::vec3(0.f), glm::vec3(0.f), glm::vec3(2.f)));
+	std::vector<Mesh*> meshes;
+	meshes.push_back(new Mesh(Pyramid(), glm::vec3(1.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(0.f), glm::vec3(2.f)));
+	this->models.push_back(new Model(glm::vec3(0.f), this->materials[material_enum::MAT_1], this->textures[TEX_CHEST], this->textures[TEX_CHEST_SPECULAR], meshes));
+	this->models.push_back(new Model(glm::vec3(0.f, 1.f, 0.f), this->materials[material_enum::MAT_1], this->textures[TEX_CAT], this->textures[TEX_CAT_SPECULAR], meshes));
+	this->models.push_back(new Model(glm::vec3(2.f, 0.f, 2.f), this->materials[material_enum::MAT_1], this->textures[TEX_CAT], this->textures[TEX_CAT_SPECULAR], meshes));
+
+	for (auto*& i : meshes)
+	{
+		delete i;
+	}
+
+	meshes.clear();
 }
 
 void Game::initLights()
@@ -162,7 +172,7 @@ Game::Game(const char* title, const int WINDOW_WIDTH, const int WINDOW_HEIGHT, c
 	this->initShaders();
 	this->initTextures();
 	this->initMaterials();
-	this->initMeshes();
+	this->initModels();
 	this->initLights();
 	this->initUniforms();
 }
@@ -184,29 +194,33 @@ Game::~Game()
 	{
 		delete this->materials[i];
 	}
-	for (size_t i = 0; i < this->meshes.size(); i++)
+	for (auto*& i : this->models)
 	{
-		delete this->meshes[i];
+		delete i;
 	}
 	for (size_t i = 0; i < this->lights.size(); i++)
 	{
 		delete this->lights[i];
 	}
 }
+
 int Game::getWindowShouldClose()
 {
 	return glfwWindowShouldClose(this->window);
 }
+
 void Game::setWindowShouldClose()
 {
 	glfwSetWindowShouldClose(this->window, GLFW_TRUE);
 }
+
 void Game::updateDt()
 {
 	this->curTime = static_cast<float>(glfwGetTime());
 	this->dt = this->curTime - this->lastTime;
 	this->lastTime = this->curTime;
 }
+
 void Game::updateMouseInput()
 {
 	glfwGetCursorPos(this->window, &this->mouseX, &this->mouseY);
@@ -223,6 +237,7 @@ void Game::updateMouseInput()
 	this->lastMouseX = this->mouseX;
 	this->lastMouseY = this->mouseY;
 }
+
 void Game::updateKeyboardInput()
 {
 	if (glfwGetKey(this->window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -254,6 +269,7 @@ void Game::updateKeyboardInput()
 		this->camPosition.y += 0.001f;
 	}
 }
+
 void Game::updateInput()
 {
 	glfwPollEvents();
@@ -261,11 +277,17 @@ void Game::updateInput()
 	this->updateMouseInput();
 	this->camera.updateInput(dt, -1, this->mouseOffsetX, this->mouseOffsetY);
 }
+
 void Game::update()
 {
 	this->updateDt();
 	this->updateInput();
+
+	this->models[0]->rotate(glm::vec3(0.f, 0.05f, 0.f));
+	this->models[1]->rotate(glm::vec3(0.f, 0.05f, 0.05f));
+	this->models[2]->rotate(glm::vec3(0.f, 0.05f, 0.05f));
 }
+
 void Game::render()
 {
 	glClearColor(0.f, 0.f, 0.f, 1.f);
@@ -273,13 +295,10 @@ void Game::render()
 
 	this->updateUniforms();
 
-	this->materials[MAT_1]->sendToShader(*this->shaders[SHADER_CORE_PROGRAM]);
-	this->shaders[SHADER_CORE_PROGRAM]->use();
-
-	this->textures[TEX_CHEST]->bind(0);
-	this->textures[TEX_CHEST_SPECULAR]->bind(1);
-
-	this->meshes[MESH_QUAD]->render(this->shaders[SHADER_CORE_PROGRAM]);
+	for (auto* i : this->models)
+	{
+		i->render(this->shaders[SHADER_CORE_PROGRAM]);
+	}
 
 	glfwSwapBuffers(window);
 	glFlush();
@@ -289,6 +308,7 @@ void Game::render()
 	glActiveTexture(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
+
 void Game::frameBufferResizeCallback(GLFWwindow* window, int width, int height)
 {
 	glViewport(0, 0, width, height);

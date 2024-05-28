@@ -44,7 +44,7 @@ private:
 	std::vector<Shader*> shaders;
 	std::vector<Texture*> textures;
 	std::vector<Material*> materials;
-	std::vector<Mesh*> meshes;
+	std::vector<Model*> models;
 	std::vector<glm::vec3*> lights;
 
 	void initGLFW();
@@ -55,7 +55,7 @@ private:
 	void initShaders();
 	void initTextures();
 	void initMaterials();
-	void initMeshes();
+	void initModels();
 	void initLights();
 	void initUniforms();
 

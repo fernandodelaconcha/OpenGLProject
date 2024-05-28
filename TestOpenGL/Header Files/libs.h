@@ -16,3 +16,4 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "../Header Files/Mesh.h"
 #include "../Header Files/Primitives.h"
+#include "../Header Files/Model.h"
