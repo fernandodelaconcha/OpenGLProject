@@ -1,0 +1,58 @@
+# Blender 3.6.4 MTL File: 'None'
+# www.blender.org
+
+newmtl color1
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+illum 2
+map_Kd C:/Users/ferna/OneDrive/Desktop/blender/objects/Cylinder Plane1.png
+map_d C:/Users/ferna/OneDrive/Desktop/blender/objects/Cylinder Plane1.png
+
+newmtl color2
+Ns 250.000000
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+illum 2
+map_Kd C:/Users/ferna/OneDrive/Desktop/blender/objects/Cylinder Plane1.png
+map_d C:/Users/ferna/OneDrive/Desktop/blender/objects/Cylinder Plane1.png
+
+newmtl leather
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd C:/Users/ferna/OneDrive/Desktop/leather_BaseColor.png
+map_Ns C:/Users/ferna/OneDrive/Desktop/leather_Roughness.png
+map_refl C:/Users/ferna/OneDrive/Desktop/leather_Metallic.png
+map_Bump -bm 1.000000 C:/Users/ferna/OneDrive/Desktop/leather_Normal.png
+
+newmtl metal
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd C:/Users/ferna/OneDrive/Desktop/metal_BaseColor.png
+map_Ns C:/Users/ferna/OneDrive/Desktop/metal_Roughness.png
+map_refl C:/Users/ferna/OneDrive/Desktop/metal_Metallic.png
+map_Bump -bm 1.000000 C:/Users/ferna/OneDrive/Desktop/metal_Normal.png
+
+newmtl wood
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd C:/Users/ferna/OneDrive/Desktop/wood_BaseColor.png
+map_Ns C:/Users/ferna/OneDrive/Desktop/wood_Roughness.png
+map_refl C:/Users/ferna/OneDrive/Desktop/wood_Metallic.png
+map_Bump -bm 1.000000 C:/Users/ferna/OneDrive/Desktop/wood_Normal.png

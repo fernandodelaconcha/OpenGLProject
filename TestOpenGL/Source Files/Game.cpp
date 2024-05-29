@@ -88,23 +88,18 @@ void Game::initTextures()
 
 void Game::initMaterials()
 {
-	this->materials.push_back(new Material(glm::vec3(0.1f), glm::vec3(1.f), glm::vec3(1.f), 0, 1));
+	this->materials.push_back(new Material(glm::vec3(0.1f), glm::vec3(1.f), glm::vec3(2.f), 0, 1));
 }
 
 void Game::initModels()
 {
-	std::vector<Mesh*> meshes;
-	meshes.push_back(new Mesh(Pyramid(), glm::vec3(1.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(0.f), glm::vec3(2.f)));
-	this->models.push_back(new Model(glm::vec3(0.f), this->materials[material_enum::MAT_1], this->textures[TEX_CHEST], this->textures[TEX_CHEST_SPECULAR], meshes));
-	this->models.push_back(new Model(glm::vec3(0.f, 1.f, 0.f), this->materials[material_enum::MAT_1], this->textures[TEX_CAT], this->textures[TEX_CAT_SPECULAR], meshes));
-	this->models.push_back(new Model(glm::vec3(2.f, 0.f, 2.f), this->materials[material_enum::MAT_1], this->textures[TEX_CAT], this->textures[TEX_CAT_SPECULAR], meshes));
+	//std::vector<Mesh*> meshes;
+	//meshes.push_back(new Mesh(Pyramid(), glm::vec3(1.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(0.f), glm::vec3(2.f)));
+	//this->models.push_back(new Model(glm::vec3(0.f), this->materials[material_enum::MAT_1], this->textures[TEX_CHEST], this->textures[TEX_CHEST_SPECULAR], meshes));
+	this->models.push_back(new Model(glm::vec3(0.f, 1.f, 0.f), this->materials[material_enum::MAT_1], this->textures[TEX_CAT], this->textures[TEX_CAT_SPECULAR], "C:/Users/ferna/OneDrive/Desktop/TestOpenGL/TestOpenGL/TestOpenGL/OBJ Files/axe.obj"));
+	this->models.push_back(new Model(glm::vec3(2.f, 0.f, 2.f), this->materials[material_enum::MAT_1], this->textures[TEX_CAT], this->textures[TEX_CAT_SPECULAR], "C:/Users/ferna/OneDrive/Desktop/TestOpenGL/TestOpenGL/TestOpenGL/OBJ Files/shield.obj"));
+	this->models.push_back(new Model(glm::vec3(4.f, 0.f, 4.f), this->materials[material_enum::MAT_1], this->textures[TEX_CAT], this->textures[TEX_CAT_SPECULAR], "C:/Users/ferna/OneDrive/Desktop/TestOpenGL/TestOpenGL/TestOpenGL/OBJ Files/bomb.obj"));
 
-	for (auto*& i : meshes)
-	{
-		delete i;
-	}
-
-	meshes.clear();
 }
 
 void Game::initLights()
@@ -283,9 +278,9 @@ void Game::update()
 	this->updateDt();
 	this->updateInput();
 
-	this->models[0]->rotate(glm::vec3(0.f, 0.05f, 0.f));
-	this->models[1]->rotate(glm::vec3(0.f, 0.05f, 0.05f));
-	this->models[2]->rotate(glm::vec3(0.f, 0.05f, 0.05f));
+	//this->models[0]->rotate(glm::vec3(0.f, 0.05f, 0.f));
+	//this->models[1]->rotate(glm::vec3(0.f, 0.05f, 0.05f));
+	//this->models[2]->rotate(glm::vec3(0.f, 0.05f, 0.05f));
 }
 
 void Game::render()
