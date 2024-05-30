@@ -14,6 +14,7 @@
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/gtc/type_ptr.hpp>
-#include "../Header Files/Mesh.h"
-#include "../Header Files/Primitives.h"
-#include "../Header Files/Model.h"
+#include "Mesh.h"
+#include "Primitives.h"
+#include "Model.h"
+#include "Light.h"

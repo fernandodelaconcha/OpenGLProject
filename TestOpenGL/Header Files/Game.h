@@ -45,7 +45,7 @@ private:
 	std::vector<Texture*> textures;
 	std::vector<Material*> materials;
 	std::vector<Model*> models;
-	std::vector<glm::vec3*> lights;
+	std::vector<PointLight*> pointLights;
 
 	void initGLFW();
 	void initWindow(const char* title, bool resizable);
@@ -56,6 +56,7 @@ private:
 	void initTextures();
 	void initMaterials();
 	void initModels();
+	void initPointLights();
 	void initLights();
 	void initUniforms();
 

@@ -132,6 +132,15 @@ public:
 		this->unuse();
 	}
 
+	void set1f(GLfloat value, const GLchar* name)
+	{
+		this->use();
+
+		glUniform1f(glGetUniformLocation(this->id, name), value);
+
+		this->unuse();
+	}
+
 	void setVec1f(GLfloat value, const GLchar* name)
 	{
 		this->use();

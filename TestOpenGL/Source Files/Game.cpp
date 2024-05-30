@@ -88,23 +88,32 @@ void Game::initTextures()
 
 void Game::initMaterials()
 {
-	this->materials.push_back(new Material(glm::vec3(0.1f), glm::vec3(1.f), glm::vec3(2.f), 0, 1));
+	this->materials.push_back(new Material(glm::vec3(0.1f), glm::vec3(1.f), glm::vec3(1.f), 0, 1));
 }
 
 void Game::initModels()
 {
-	//std::vector<Mesh*> meshes;
-	//meshes.push_back(new Mesh(Pyramid(), glm::vec3(1.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(0.f), glm::vec3(2.f)));
-	//this->models.push_back(new Model(glm::vec3(0.f), this->materials[material_enum::MAT_1], this->textures[TEX_CHEST], this->textures[TEX_CHEST_SPECULAR], meshes));
+	std::vector<Mesh*> meshes;
+	meshes.push_back(new Mesh(Quad(), glm::vec3(0.f, 0.f, 0.f), glm::vec3(-90.f, 0.f, 0.f), glm::vec3(0.f), glm::vec3(100.f)));
+	this->models.push_back(new Model(glm::vec3(2.f, -5.f, 2.f), this->materials[material_enum::MAT_1], this->textures[TEX_CHEST], this->textures[TEX_CHEST_SPECULAR], meshes));
 	this->models.push_back(new Model(glm::vec3(0.f, 1.f, 0.f), this->materials[material_enum::MAT_1], this->textures[TEX_CAT], this->textures[TEX_CAT_SPECULAR], "C:/Users/ferna/OneDrive/Desktop/TestOpenGL/TestOpenGL/TestOpenGL/OBJ Files/axe.obj"));
 	this->models.push_back(new Model(glm::vec3(2.f, 0.f, 2.f), this->materials[material_enum::MAT_1], this->textures[TEX_CAT], this->textures[TEX_CAT_SPECULAR], "C:/Users/ferna/OneDrive/Desktop/TestOpenGL/TestOpenGL/TestOpenGL/OBJ Files/shield.obj"));
 	this->models.push_back(new Model(glm::vec3(4.f, 0.f, 4.f), this->materials[material_enum::MAT_1], this->textures[TEX_CAT], this->textures[TEX_CAT_SPECULAR], "C:/Users/ferna/OneDrive/Desktop/TestOpenGL/TestOpenGL/TestOpenGL/OBJ Files/bomb.obj"));
 
+	for (auto*& i : meshes)
+	{
+		delete i;
+	}
+}
+
+void Game::initPointLights()
+{
+	this->pointLights.push_back(new PointLight(glm::vec3(0.f)));
 }
 
 void Game::initLights()
 {
-	this->lights.push_back(new glm::vec3(0.f, 0.f, 1.f));
+	this->initPointLights();
 }
 
 void Game::initUniforms()
@@ -112,7 +121,10 @@ void Game::initUniforms()
 	this->shaders[SHADER_CORE_PROGRAM]->setMat4fv(this->ViewMatrix, "ViewMatrix");
 	this->shaders[SHADER_CORE_PROGRAM]->setMat4fv(this->ProjectionMatrix, "ProjectionMatrix");
 
-	this->shaders[SHADER_CORE_PROGRAM]->setVec3f(*this->lights[0], "lightPos");
+	for (PointLight * pl: this->pointLights)
+	{
+		pl->sendToShader(*this->shaders[SHADER_CORE_PROGRAM]);
+	}
 }
 
 void Game::updateUniforms()
@@ -120,6 +132,11 @@ void Game::updateUniforms()
 	this->ViewMatrix = this->camera.getViewMatrix();
 	this->shaders[SHADER_CORE_PROGRAM]->setMat4fv(this->ViewMatrix, "ViewMatrix");
 	this->shaders[SHADER_CORE_PROGRAM]->setVec3f(this->camera.getPosition(), "cameraPos");
+
+	for (PointLight* pl : this->pointLights)
+	{
+		pl->sendToShader(*this->shaders[SHADER_CORE_PROGRAM]);
+	}
 
 	glfwGetFramebufferSize(this->window, &this->frameBufferWidth, &this->frameBufferHeight);
 
@@ -193,9 +210,9 @@ Game::~Game()
 	{
 		delete i;
 	}
-	for (size_t i = 0; i < this->lights.size(); i++)
+	for (size_t i = 0; i < this->pointLights.size(); i++)
 	{
-		delete this->lights[i];
+		delete this->pointLights[i];
 	}
 }
 
@@ -231,6 +248,11 @@ void Game::updateMouseInput()
 
 	this->lastMouseX = this->mouseX;
 	this->lastMouseY = this->mouseY;
+
+	if (glfwGetMouseButton(this->window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS)
+	{
+		this->pointLights[0]->setPosition(this->camera.getPosition());
+	}
 }
 
 void Game::updateKeyboardInput()
